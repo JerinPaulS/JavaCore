@@ -1,0 +1,261 @@
+Here are some **interview questions** on **Association, Aggregation, and Composition** in Java, along with their answers.
+
+---
+
+### **1. What is the difference between Association, Aggregation, and Composition?**
+#### **Answer:**
+- **Association** is a general relationship between two classes where they can interact but exist independently.
+- **Aggregation** is a weak form of Association where one class has a reference to another, but they can exist separately.
+- **Composition** is a strong form of Aggregation where one class **owns** another, and the child class **cannot exist independently**.
+
+| Feature         | Association      | Aggregation       | Composition       |
+|----------------|-----------------|-------------------|-------------------|
+| **Type**       | General relation | Has-A (Weak)      | Has-A (Strong)    |
+| **Dependency** | No dependency    | Child can exist  | Child **depends** on Parent |
+| **Example**    | Person → Address | Department → Students | Car → Engine |
+
+---
+
+### **2. Can you provide a real-world example of Composition?**
+#### **Answer:**
+Yes. A **Car** and its **Engine** is an example of **Composition**. The **Engine** cannot function without a **Car**.
+
+**Example in Java:**
+```java
+class Engine {
+    String type;
+
+    Engine(String type) {
+        this.type = type;
+    }
+
+    void start() {
+        System.out.println(type + " engine starting...");
+    }
+}
+
+class Car {
+    private final Engine engine; // Composition: Car owns Engine
+
+    Car(String type) {
+        this.engine = new Engine(type);
+    }
+
+    void drive() {
+        engine.start();
+        System.out.println("Car is driving...");
+    }
+}
+
+public class CompositionExample {
+    public static void main(String[] args) {
+        Car car = new Car("Electric");
+        car.drive();
+    }
+}
+```
+✅ Here, **if the Car is destroyed, the Engine is also destroyed**.
+
+---
+
+### **3. What happens if you delete the parent object in Aggregation?**
+#### **Answer:**
+In **Aggregation**, the **child object can exist independently** of the parent.
+
+For example, if we have a `Department` and `Student`:
+```java
+class Student {
+    String name;
+
+    Student(String name) {
+        this.name = name;
+    }
+}
+
+class Department {
+    String deptName;
+    List<Student> students; // Aggregation
+
+    Department(String deptName, List<Student> students) {
+        this.deptName = deptName;
+        this.students = students;
+    }
+}
+```
+If we **delete the `Department`**, the `Student` objects **still exist**.
+
+---
+
+### **4. How is Composition implemented in Java?**
+#### **Answer:**
+Composition is implemented by **creating an instance of another class inside the parent class**.
+
+Example:
+```java
+class Brain {
+    void think() {
+        System.out.println("Thinking...");
+    }
+}
+
+class Human {
+    private final Brain brain; // Composition
+
+    Human() {
+        brain = new Brain(); // Brain cannot exist without Human
+    }
+
+    void useBrain() {
+        brain.think();
+    }
+}
+```
+Here, if the `Human` object is destroyed, the `Brain` also ceases to exist.
+
+---
+
+### **5. Can Aggregation and Composition exist together in a system?**
+#### **Answer:**
+Yes. In a large system, you may have **both Aggregation and Composition**.
+
+Example:
+- A **Library** has **Books** (**Aggregation** because books exist independently).
+- A **Book** has **Chapters** (**Composition** because chapters depend on the book).
+
+```java
+class Chapter {
+    String title;
+
+    Chapter(String title) {
+        this.title = title;
+    }
+}
+
+class Book {
+    String name;
+    private final List<Chapter> chapters; // Composition
+
+    Book(String name) {
+        this.name = name;
+        this.chapters = new ArrayList<>();
+    }
+
+    void addChapter(String title) {
+        chapters.add(new Chapter(title));
+    }
+}
+
+class Library {
+    List<Book> books; // Aggregation
+
+    Library(List<Book> books) {
+        this.books = books;
+    }
+}
+```
+✅ Here, `Book` has `Chapters` (Composition), and `Library` has `Books` (Aggregation).
+
+---
+
+### **6. When would you use Aggregation instead of Composition?**
+#### **Answer:**
+Use **Aggregation** when:
+- The child can **exist independently** of the parent.
+- Objects have **a shared relationship**.
+
+Use **Composition** when:
+- The child **cannot exist without** the parent.
+- The lifecycle of the child **depends** on the parent.
+
+Example:
+- **Aggregation**: A `Teacher` can work in multiple `Departments`, and if a `Department` is removed, the `Teacher` still exists.
+- **Composition**: A `Car` **owns** an `Engine`, and if the `Car` is destroyed, the `Engine` is too.
+
+---
+
+### **7. How can we achieve Association in Java without Aggregation or Composition?**
+#### **Answer:**
+Association can be achieved using **references without ownership**.
+
+Example:
+```java
+class Employee {
+    String name;
+
+    Employee(String name) {
+        this.name = name;
+    }
+}
+
+class Company {
+    String companyName;
+
+    Company(String companyName) {
+        this.companyName = companyName;
+    }
+
+    void worksFor(Employee e) {
+        System.out.println(e.name + " works at " + companyName);
+    }
+}
+
+public class AssociationExample {
+    public static void main(String[] args) {
+        Employee emp = new Employee("Alice");
+        Company comp = new Company("TechCorp");
+
+        comp.worksFor(emp);
+    }
+}
+```
+✅ Here, `Employee` and `Company` are **associated** but exist independently.
+
+---
+
+### **8. Can we change Aggregation to Composition later in a project?**
+#### **Answer:**
+Yes, but it depends on the **business logic**.
+
+Example:
+- If we initially model `Person` and `Address` using **Aggregation** (because a person **can** change address), later we
+may decide that `Person` **owns** an `Address` (**Composition**), meaning an address is tied to that person’s lifecycle.
+
+This requires:
+- Refactoring code to manage the **lifecycle**.
+- Ensuring that **deleting the parent deletes the child**.
+
+---
+
+### **9. What will happen if we use `final` with an Aggregation reference?**
+#### **Answer:**
+Using `final` prevents **reassignment** of the reference but does not enforce Composition.
+
+Example:
+```java
+class Student {
+    String name;
+
+    Student(String name) {
+        this.name = name;
+    }
+}
+
+class Department {
+    private final List<Student> students; // Still Aggregation
+
+    Department(List<Student> students) {
+        this.students = students;
+    }
+}
+```
+✅ The reference `students` **cannot be reassigned**, but `Student` objects **can still exist independently**.
+
+---
+
+### **10. Does Java provide built-in support for Aggregation and Composition?**
+#### **Answer:**
+No, Java does not provide built-in keywords for **Aggregation** or **Composition**. However, we implement them using:
+- Instance variables for **Composition**.
+- External references for **Aggregation**.
+
+---
