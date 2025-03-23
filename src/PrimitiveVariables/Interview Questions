@@ -1,0 +1,319 @@
+Here are some **intermediate to advanced** Java interview questions on **primitive data types**, along with answers and coding examples.
+
+---
+
+## 1. What are the primitive data types in Java?
+### Answer:
+Java has **8 primitive data types**:
+1. **byte** (8-bit, stores -128 to 127)
+2. **short** (16-bit, stores -32,768 to 32,767)
+3. **int** (32-bit, stores -2^31 to 2^31-1)
+4. **long** (64-bit, stores -2^63 to 2^63-1)
+5. **float** (32-bit, stores decimal numbers with 6-7 precision)
+6. **double** (64-bit, stores decimal numbers with 15-16 precision)
+7. **char** (16-bit, stores Unicode characters)
+8. **boolean** (1-bit, stores `true` or `false`)
+
+---
+
+## 2. How does Java store floating-point numbers internally?
+### Answer:
+Java follows **IEEE 754 standard** for storing floating-point numbers.
+- **`float`** (32-bit) uses **single-precision** (1-bit sign, 8-bit exponent, 23-bit mantissa).
+- **`double`** (64-bit) uses **double-precision** (1-bit sign, 11-bit exponent, 52-bit mantissa).
+
+📌 **Code Example:**
+```java
+public class FloatPrecisionTest {
+    public static void main(String[] args) {
+        float f = 0.1f;
+        double d = 0.1;
+
+        System.out.println("Float value: " + f);
+        System.out.println("Double value: " + d);
+        System.out.println("Float to double: " + (double) f);
+        System.out.println("Double to float: " + (float) d);
+    }
+}
+```
+🔹 **Output:**
+```
+Float value: 0.1
+Double value: 0.1
+Float to double: 0.10000000149011612
+Double to float: 0.1
+```
+🔍 **Explanation:**
+`float` loses precision when converted to `double`.
+
+---
+
+## 3. What is type promotion in Java?
+### Answer:
+Type promotion automatically converts **smaller** data types to **larger** ones in expressions.
+
+📌 **Example:**
+```java
+public class TypePromotion {
+    public static void main(String[] args) {
+        byte a = 10;
+        byte b = 20;
+        // byte c = a + b; // Compilation error
+        int c = a + b; // Byte promotes to int
+        System.out.println(c);
+    }
+}
+```
+🔍 **Explanation:**
+`byte` and `short` are automatically promoted to `int` in arithmetic operations.
+
+---
+
+## 4. What is the difference between `==` and `.equals()` when comparing primitive data types?
+### Answer:
+For **primitives**, only `==` is used. `.equals()` does **not** work because primitives are not objects.
+
+📌 **Example:**
+```java
+int a = 5;
+int b = 5;
+System.out.println(a == b);  // true
+
+Integer x = 5;
+Integer y = 5;
+System.out.println(x.equals(y));  // true
+System.out.println(x == y); // true (due to Integer caching for values -128 to 127)
+
+Integer m = 200;
+Integer n = 200;
+System.out.println(m == n); // false (no caching for values > 127)
+```
+🔍 **Explanation:**
+- `==` compares **values** for primitives.
+- `Integer` objects are cached only for values **-128 to 127**.
+
+---
+
+## 5. Can a `char` be assigned a numeric value?
+### Answer:
+Yes, `char` can store **integer values** because it is internally stored as **Unicode**.
+
+📌 **Example:**
+```java
+public class CharExample {
+    public static void main(String[] args) {
+        char c = 65;  // ASCII for 'A'
+        System.out.println(c); // Output: A
+    }
+}
+```
+
+---
+
+## 6. What happens if an integer overflows in Java?
+### Answer:
+Java **does not throw an exception** on overflow; instead, it wraps around using **modulo 2^N arithmetic**.
+
+📌 **Example:**
+```java
+public class OverflowExample {
+    public static void main(String[] args) {
+        int max = Integer.MAX_VALUE;
+        System.out.println("Max value: " + max);
+        System.out.println("Max + 1: " + (max + 1)); // Overflow, wraps to negative
+    }
+}
+```
+🔹 **Output:**
+```
+Max value: 2147483647
+Max + 1: -2147483648
+```
+🔍 **Explanation:**
+When `int` overflows, it **wraps around** to the lowest possible value.
+
+---
+
+## 7. Why does `float` sometimes produce unexpected results in Java?
+### Answer:
+Floating-point precision errors occur due to **binary representation limitations**.
+
+📌 **Example:**
+```java
+public class FloatingPointError {
+    public static void main(String[] args) {
+        double a = 0.1 + 0.2;
+        System.out.println(a == 0.3); // false
+        System.out.println(a); // 0.30000000000000004
+    }
+}
+```
+🔍 **Explanation:**
+- `0.1` and `0.2` have no **exact** binary representation.
+- Small precision errors accumulate.
+
+---
+
+## 8. What is the difference between `float` and `double` in terms of accuracy?
+### Answer:
+- **`float`** is **single-precision (32-bit)**, so it's **less accurate**.
+- **`double`** is **double-precision (64-bit)**, so it's **more accurate**.
+
+📌 **Example:**
+```java
+public class FloatVsDouble {
+    public static void main(String[] args) {
+        float f = 1.0000001f;
+        double d = 1.0000000000000001;
+
+        System.out.println(f); // 1.0000001
+        System.out.println(d); // 1.0 (Precision loss)
+    }
+}
+```
+
+---
+
+## 9. Can `boolean` data type be converted into an `int`?
+### Answer:
+No, Java **does not allow implicit conversion** between `boolean` and `int`.
+
+📌 **Example:**
+```java
+boolean flag = true;
+// int num = flag;  // Compilation error
+```
+🔍 **Workaround:**
+```java
+int num = flag ? 1 : 0; // Convert boolean to int
+System.out.println(num); // Output: 1
+```
+
+---
+
+## 10. What is the difference between `Integer.parseInt()` and `Integer.valueOf()`?
+### Answer:
+- **`parseInt(String s)`** returns a **primitive `int`**.
+- **`valueOf(String s)`** returns an **Integer object**.
+
+📌 **Example:**
+```java
+public class ParseIntVsValueOf {
+    public static void main(String[] args) {
+        int num1 = Integer.parseInt("100"); // int
+        Integer num2 = Integer.valueOf("100"); // Integer
+
+        System.out.println(num1 + 10); // 110
+        System.out.println(num2 + 10); // 110
+    }
+}
+```
+In Java, you can check whether two `Integer` objects **refer to the same memory location** using the `==` operator. However, the behavior depends on **Integer caching**.
+
+---
+
+### 🔹 **Understanding Integer Caching**
+- Java caches `Integer` objects in the range **-128 to 127**.
+- If two `Integer` values are within this range, they **may** point to the same memory location.
+- Values outside this range are **not cached** and will have **separate memory locations**.
+
+---
+
+### ✅ **Code Example: Checking Memory Location of `Integer` Variables**
+```java
+public class IntegerMemoryCheck {
+    public static void main(String[] args) {
+        Integer a = 100;  // Cached
+        Integer b = 100;  // Cached
+        System.out.println(a == b);  // true (same memory location)
+
+        Integer x = 200;  // Not cached
+        Integer y = 200;  // Not cached
+        System.out.println(x == y);  // false (different memory locations)
+    }
+}
+```
+
+🔹 **Output:**
+```
+true
+false
+```
+
+### 🔍 **Explanation**
+- `Integer a = 100; Integer b = 100;` → **Same memory (cached)**
+- `Integer x = 200; Integer y = 200;` → **Different memory (not cached)**
+
+---
+
+### ✅ **Forcing New Memory Allocation**
+If you explicitly create `Integer` objects using `new`, they will always be in **different memory locations**.
+
+```java
+Integer a = new Integer(100);
+Integer b = new Integer(100);
+System.out.println(a == b);  // false (different memory locations)
+```
+
+---
+
+### ✅ **Using `System.identityHashCode()` to Check Memory Location**
+`System.identityHashCode()` returns the **actual memory identity** of an object.
+
+```java
+public class IdentityHashCodeCheck {
+    public static void main(String[] args) {
+        Integer a = 100;  // Cached
+        Integer b = 100;  // Cached
+        Integer x = 200;  // Not cached
+        Integer y = 200;  // Not cached
+
+        System.out.println(System.identityHashCode(a));
+        System.out.println(System.identityHashCode(b));
+        System.out.println(System.identityHashCode(x));
+        System.out.println(System.identityHashCode(y));
+    }
+}
+```
+
+🔹 **Expected Output (Example)**
+```
+12345678  // Same for a & b
+12345678
+87654321  // Different for x & y
+98765432
+```
+
+---
+
+### ✅ **How to Disable Integer Caching?**
+By default, Java caches values between `-128` and `127`.
+You can **control** this range using the **`-Djava.lang.Integer.IntegerCache.high=<value>`** JVM option.
+
+For example, run your program with:
+```
+java -Djava.lang.Integer.IntegerCache.high=200 IntegerMemoryCheck
+```
+Now **200** will also be cached.
+
+---
+
+### 🔥 **Key Takeaways**
+✔ Use `==` to check memory location.
+✔ `Integer` values between `-128` and `127` are **cached** (same memory).
+✔ Values **outside this range** get **new memory allocation**.
+✔ Use `System.identityHashCode()` to check actual memory location.
+✔ `new Integer(x)` always creates **new objects** (not cached).
+
+Would you like some **advanced memory management questions** related to this? 🚀
+
+---
+
+### Conclusion
+These **intermediate to advanced** interview questions test **deep knowledge** of Java's primitive types, covering:
+✅ **Type conversion & promotion**
+✅ **Floating-point precision issues**
+✅ **Overflow behavior**
+✅ **Primitive vs Wrapper classes**
+
+Would you like **more questions with tricky coding problems?** 🚀
