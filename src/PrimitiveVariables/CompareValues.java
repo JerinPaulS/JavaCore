@@ -7,6 +7,10 @@ public class CompareValues {
         int b = 5;
         System.out.println(a == b);  // true
 
+        int a1 = 500;
+        int b1 = 500;
+        System.out.println(a1 == b1);
+
         Integer x = 5;
         Integer y = 5;
         System.out.println(x.equals(y));  // true
